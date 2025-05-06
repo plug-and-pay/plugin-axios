@@ -1,5 +1,5 @@
 {
-  "name": "@vuex-orm/plugin-axios",
+  "name": "huddle-plugin-axios",
   "version": "0.9.1",
   "description": "Vuex ORM plugin for adding smooth integration with axios.",
   "main": "dist/vuex-orm-axios.common.js",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vuex-orm/plugin-axios.git"
+    "url": "git+https://github.com/plug-and-pay/plugin-axios.git"
   },
   "keywords": [
     "vue",
@@ -38,7 +38,7 @@
   "author": "Kia Ishii <kia.king.08@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vuex-orm/plugin-axios/issues"
+    "url": "https://github.com/plug-and-pay/plugin-axios/issues"
   },
   "dependencies": {
     "@vuex-orm/core": "^0.33.0",
