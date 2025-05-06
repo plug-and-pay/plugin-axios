@@ -1,7 +1,7 @@
 import { Model } from '@vuex-orm/core'
-import Components from './contracts/Components'
-import GlobalConfig from './contracts/GlobalConfig'
-import ModelMixin from './mixins/Model'
+import { Components } from './contracts/Components'
+import { GlobalConfig } from './contracts/Config'
+import { Model as ModelMixin } from './mixins/Model'
 
 export default class VuexORMAxios {
   /**
@@ -17,15 +17,15 @@ export default class VuexORMAxios {
   /**
    * Create a new Vuex ORM Axios instance.
    */
-  constructor (components: Components, config: GlobalConfig) {
+  constructor(components: Components, config: GlobalConfig) {
     this.model = components.Model
     this.config = config
   }
 
   /**
-   * Plug in features.
+   * Plug-in features.
    */
-  plugin (): void {
+  plugin(): void {
     ModelMixin(this.model, this.config)
   }
 }

@@ -1,6 +1,10 @@
-/coverage
-/docs/.vuepress/dist
-/docs/node_modules
-/lib
-/node_modules
+.nyc_output
+.tmp
+.idea/*
+.vscode/*
 yarn-error.log
+node_modules
+dist
+/coverage
+/docs-api
+/temp

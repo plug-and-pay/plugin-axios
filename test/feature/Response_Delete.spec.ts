@@ -1,7 +1,7 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
-import { createStore, createState } from 'test/support/Helpers'
-import { Model, Fields } from '@vuex-orm/core'
+import { createStore, assertState } from 'test/support/Helpers'
+import { Model } from '@vuex-orm/core'
 
 describe('Feature - Response - Save', () => {
   let mock: MockAdapter
@@ -9,7 +9,7 @@ describe('Feature - Response - Save', () => {
   class User extends Model {
     static entity = 'users'
 
-    static fields (): Fields {
+    static fields() {
       return {
         id: this.attr(null),
         name: this.attr('')
@@ -17,33 +17,31 @@ describe('Feature - Response - Save', () => {
     }
   }
 
-  beforeEach(() => { mock = new MockAdapter(axios) })
-  afterEach(() => { mock.reset() })
+  beforeEach(() => {
+    mock = new MockAdapter(axios)
+  })
+  afterEach(() => {
+    mock.reset()
+  })
 
-  it('can save response data afterword', async () => {
+  it('can save response data manually', async () => {
     mock.onGet('/api/users').reply(200, { id: 1, name: 'John Doe' })
 
     const store = createStore([User])
 
     const response = await User.api().get('/api/users')
 
-    const expected1 = createState({
+    assertState(store, {
       users: {
-        1: { $id: 1, id: 1, name: 'John Doe' }
+        1: { $id: '1', id: 1, name: 'John Doe' }
       }
     })
-
-    expect(store.state.entities).toEqual(expected1)
 
     response.config.delete = 1
 
     await response.delete()
 
-    const expected2 = createState({
-      users: {}
-    })
-
-    expect(store.state.entities).toEqual(expected2)
+    assertState(store, { users: {} })
   })
 
   it('throws error if `delete` option is not set', async () => {
@@ -56,7 +54,9 @@ describe('Feature - Response - Save', () => {
     try {
       await response.delete()
     } catch (e) {
-      expect(e.message).toBe('[Vuex ORM Axios] Could not delete records because the `delete` option is not set.')
+      expect(e.message).toBe(
+        '[Vuex ORM Axios] Could not delete records because the `delete` option is not set.'
+      )
 
       return
     }

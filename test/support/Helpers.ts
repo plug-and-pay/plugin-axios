@@ -1,29 +1,44 @@
 import axios from 'axios'
 import Vue from 'vue'
-import * as Vuex from 'vuex'
+import Vuex, { Store } from 'vuex'
 import VuexORM, { Database, Model } from '@vuex-orm/core'
 import VuexORMAxios from '@/index'
 
 Vue.use(Vuex)
 
-export function createStore (models: typeof Model[]): Vuex.Store<any> {
+interface Entities {
+  [name: string]: Elements
+}
+
+interface State {
+  data: Elements
+}
+
+interface Elements {
+  [id: string]: Record<string, any>
+}
+
+export function createStore(models: typeof Model[]): Store<any> {
   VuexORM.use(VuexORMAxios, { axios })
 
   const database = new Database()
 
-  models.forEach(model => { database.register(model) })
+  models.forEach((model) => {
+    database.register(model)
+  })
 
-  return new Vuex.Store({
-    plugins: [VuexORM.install(database)]
+  return new Store({
+    plugins: [VuexORM.install(database)],
+    strict: true
   })
 }
 
-export function createState (state: any): any {
+export function createState(entities: Entities): any {
   return {
     $name: 'entities',
 
-    ...Object.keys(state).reduce((carry, name) => {
-      const data = state[name]
+    ...Object.keys(entities).reduce((carry, name) => {
+      const data = entities[name]
 
       carry[name] = {
         $connection: 'entities',
@@ -36,4 +51,17 @@ export function createState (state: any): any {
   }
 }
 
-export default { createStore }
+export function assertState(store: Store<any>, entities: Entities): void {
+  expect(store.state.entities).toEqual(createState(entities))
+}
+
+export function fillState(store: Store<any>, entities: Entities): void {
+  for (const entity in entities) {
+    store.commit(`entities/$mutate`, {
+      entity,
+      callback: (state: State) => {
+        state.data = entities[entity]
+      }
+    })
+  }
+}
